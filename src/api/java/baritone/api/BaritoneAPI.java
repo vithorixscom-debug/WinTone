@@ -1,51 +1,72 @@
 /*
- * This file is part of Baritone.
+ * This file is part of Winton.
  *
- * Baritone is free software: you can redistribute it and/or modify
+ * Winton is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Baritone is distributed in the hope that it will be useful,
+ * Winton is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
+ * along with Winton.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Based on Baritone (https://github.com/cabaletta/baritone).
+ * Copyright (c) Baritone contributors. Modifications Copyright (c) WinTone contributors.
+ * Compatibility entry: mods may still call baritone.api.BaritoneAPI.
  */
 
 package baritone.api;
 
-import baritone.api.utils.SettingsUtil;
+import winton.api.IWinton;
+import winton.api.IWintonProvider;
+import winton.api.Settings;
+import winton.api.WintonAPI;
 
 /**
- * Exposes the {@link IBaritoneProvider} instance and the {@link Settings} instance for API usage.
- *
- * @author Brady
- * @since 9/23/2018
+ * Drop-in style entry for mods that expect {@code baritone.api.BaritoneAPI}.
+ * Delegates to Winton's live provider/settings.
  */
 public final class BaritoneAPI {
+	private BaritoneAPI() {
+	}
 
-    private static final IBaritoneProvider provider;
-    private static final Settings settings;
+	public static IBaritoneProvider getProvider() {
+		return BaritoneProviderBridge.INSTANCE;
+	}
 
-    static {
-        settings = new Settings();
-        SettingsUtil.readAndApply(settings, SettingsUtil.SETTINGS_DEFAULT_NAME);
+	/** Same settings instance the player configures as Winton. */
+	public static Settings getSettings() {
+		return WintonAPI.getSettings();
+	}
 
-        try {
-            provider = (IBaritoneProvider) Class.forName("baritone.BaritoneProvider").newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+	/**
+	 * Bridge provider: Baritone method names → Winton instances.
+	 */
+	public interface IBaritoneProvider {
+		IWinton getPrimaryBaritone();
 
-    public static IBaritoneProvider getProvider() {
-        return BaritoneAPI.provider;
-    }
+		java.util.List<IWinton> getAllBaritones();
 
-    public static Settings getSettings() {
-        return BaritoneAPI.settings;
-    }
+		default IWinton getBaritoneForPlayer(net.minecraft.client.player.LocalPlayer player) {
+			return WintonAPI.getProvider().getWintonForPlayer(player);
+		}
+	}
+
+	private enum BaritoneProviderBridge implements IBaritoneProvider {
+		INSTANCE;
+
+		@Override
+		public IWinton getPrimaryBaritone() {
+			return WintonAPI.getProvider().getPrimaryWinton();
+		}
+
+		@Override
+		public java.util.List<IWinton> getAllBaritones() {
+			return WintonAPI.getProvider().getAllWintons();
+		}
+	}
 }

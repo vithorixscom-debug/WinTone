@@ -1,0 +1,40 @@
+Winton / WinTone
+================
+
+Copyright (c) WinTone contributors, for modifications in this distribution.
+Copyright (c) Baritone contributors, including leijurv and Brady, for the upstream pathing code.
+Copyright (c) masa, for the MiniHUD and Tweakeroo portions ported into this build.
+
+This program is a modified fork of Baritone for Minecraft Fabric 1.21.11.
+Upstream: https://github.com/cabaletta/baritone
+WinTone is not affiliated with or endorsed by the Baritone authors.
+
+Licenses
+--------
+Baritone and the Winton modifications of that code are licensed under the
+GNU Lesser General Public License, version 3 or later (LGPL-3.0-or-later).
+The license text is LICENSE.
+
+MiniHUD-derived code is LGPL-3.0-only. See NOTICE_MINIHUD.txt and LICENSE_MINIHUD.txt.
+Tweakeroo-derived code is LGPL-3.0-only. See NOTICE_TWEAKEROO.txt and LICENSE_TWEAKEROO.txt.
+
+Because this distribution combines those parts into one program, the combined
+work is LGPL-3.0-only. Do not relicense the combined jar as LGPL-3.0-or-later
+or under any other terms.
+
+What you must keep
+------------------
+  1. This NOTICE, LICENSE, NOTICE_MINIHUD.txt, NOTICE_TWEAKEROO.txt,
+     LICENSE_MINIHUD.txt, and LICENSE_TWEAKEROO.txt.
+     Built jars copy them into META-INF/.
+  2. A clear statement that WinTone is based on Baritone, with the upstream link.
+  3. Copyright and license headers in source files. Tweakeroo and MiniHUD
+     headers must stay LGPL-3.0-only.
+  4. Corresponding Source for every published binary (a public git repository
+     that keeps Baritone's authorship, or a source archive shipped with the release).
+  5. Do not send WinTone bug reports to cabaletta/baritone. Upstream issue links
+     in comments refer to historical Baritone issues only.
+
+Naming
+------
+"Baritone" is the upstream project name. "Winton" and "WinTone" name this fork.

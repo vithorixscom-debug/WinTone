@@ -1,0 +1,60 @@
+/*
+ * This file is part of Winton, a modified version of Baritone.
+ * Copyright (c) Baritone contributors.
+ * Copyright (c) WinTone contributors, for modifications.
+ *
+ * Winton is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Winton is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Winton.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package winton.utils.schematic.schematica;
+
+import winton.api.schematic.IStaticSchematic;
+import com.github.lunatrius.schematica.client.world.SchematicWorld;
+import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+
+public final class SchematicAdapter implements IStaticSchematic {
+
+    private final SchematicWorld schematic;
+
+    public SchematicAdapter(SchematicWorld schematicWorld) {
+        this.schematic = schematicWorld;
+    }
+
+    @Override
+    public BlockState desiredState(int x, int y, int z, BlockState current, List<BlockState> approxPlaceable) {
+        return this.getDirect(x, y, z);
+    }
+
+    @Override
+    public BlockState getDirect(int x, int y, int z) {
+        return this.schematic.getSchematic().getBlockState(new BlockPos(x, y, z));
+    }
+
+    @Override
+    public int widthX() {
+        return schematic.getSchematic().getWidth();
+    }
+
+    @Override
+    public int heightY() {
+        return schematic.getSchematic().getHeight();
+    }
+
+    @Override
+    public int lengthZ() {
+        return schematic.getSchematic().getLength();
+    }
+}

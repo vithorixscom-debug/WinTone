@@ -1,0 +1,251 @@
+/*
+ * This file is part of Winton, a modified version of Baritone.
+ * Copyright (c) Baritone contributors.
+ * Copyright (c) WinTone contributors, for modifications.
+ *
+ * Winton is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Winton is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Winton.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package winton.pathing.movement.movements;
+
+import winton.Winton;
+import winton.api.IWinton;
+import winton.api.pathing.movement.MovementStatus;
+import winton.api.utils.BetterBlockPos;
+import winton.api.utils.input.Input;
+import winton.pathing.movement.CalculationContext;
+import winton.pathing.movement.Movement;
+import winton.pathing.movement.MovementHelper;
+import winton.pathing.movement.MovementState;
+import winton.utils.BlockStateInterface;
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class MovementAscend extends Movement {
+
+    private int ticksWithoutPlacement = 0;
+    /** Jump is held for a few ticks once the body is against the step. */
+    private int jumpHold = 0;
+
+    public MovementAscend(IWinton winton, BetterBlockPos src, BetterBlockPos dest) {
+        super(winton, src, dest, new BetterBlockPos[]{dest, src.above(2), dest.above()}, dest.below());
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        ticksWithoutPlacement = 0;
+    }
+
+    @Override
+    public double calculateCost(CalculationContext context) {
+        return cost(context, src.x, src.y, src.z, dest.x, dest.z);
+    }
+
+    @Override
+    protected Set<BetterBlockPos> calculateValidPositions() {
+        BetterBlockPos prior = new BetterBlockPos(src.subtract(getDirection()).above()); // sometimes we back up to place the block, also sprint ascends, also skip descend to straight ascend
+        return ImmutableSet.of(src,
+                src.above(),
+                dest,
+                prior,
+                prior.above()
+        );
+    }
+
+    public static double cost(CalculationContext context, int x, int y, int z, int destX, int destZ) {
+        BlockState toPlace = context.get(destX, y, destZ);
+        double additionalPlacementCost = 0;
+        if (!MovementHelper.canWalkOn(context, destX, y, destZ, toPlace)) {
+            additionalPlacementCost = context.costOfPlacingAt(destX, y, destZ, toPlace);
+            if (additionalPlacementCost >= COST_INF) {
+                return COST_INF;
+            }
+            if (!MovementHelper.isReplaceable(destX, y, destZ, toPlace, context.bsi)) {
+                return COST_INF;
+            }
+            boolean foundPlaceOption = false;
+            for (int i = 0; i < 5; i++) {
+                int againstX = destX + HORIZONTALS_BUT_ALSO_DOWN_____SO_EVERY_DIRECTION_EXCEPT_UP[i].getStepX();
+                int againstY = y + HORIZONTALS_BUT_ALSO_DOWN_____SO_EVERY_DIRECTION_EXCEPT_UP[i].getStepY();
+                int againstZ = destZ + HORIZONTALS_BUT_ALSO_DOWN_____SO_EVERY_DIRECTION_EXCEPT_UP[i].getStepZ();
+                if (againstX == x && againstZ == z) { // we might be able to backplace now, but it doesn't matter because it will have been broken by the time we'd need to use it
+                    continue;
+                }
+                if (MovementHelper.canPlaceAgainst(context.bsi, againstX, againstY, againstZ)) {
+                    foundPlaceOption = true;
+                    break;
+                }
+            }
+            if (!foundPlaceOption) { // didn't find a valid place =(
+                return COST_INF;
+            }
+        }
+        BlockState srcUp2 = context.get(x, y + 2, z); // used lower down anyway
+        if (context.get(x, y + 3, z).getBlock() instanceof FallingBlock && (MovementHelper.canWalkThrough(context, x, y + 1, z) || !(srcUp2.getBlock() instanceof FallingBlock))) {//it would fall on us and possibly suffocate us
+            // HOWEVER, we assume that we're standing in the start position
+            // that means that src and src.up(1) are both air
+            // maybe they aren't now, but they will be by the time this starts
+            // if the lower one is can't walk through and the upper one is falling, that means that by standing on src
+            // (the presupposition of this Movement)
+            // we have necessarily already cleared the entire FallingBlock stack
+            // on top of our head
+
+            // as in, if we have a block, then two FallingBlocks on top of it
+            // and that block is x, y+1, z, and we'd have to clear it to even start this movement
+            // we don't need to worry about those FallingBlocks because we've already cleared them
+            return COST_INF;
+            // you may think we only need to check srcUp2, not srcUp
+            // however, in the scenario where glitchy world gen where unsupported sand / gravel generates
+            // it's possible srcUp is AIR from the start, and srcUp2 is falling
+            // and in that scenario, when we arrive and break srcUp2, that lets srcUp3 fall on us and suffocate us
+        }
+        BlockState srcDown = context.get(x, y - 1, z);
+        if (MovementHelper.isClimbable(srcDown.getBlock())) {
+            return COST_INF;
+        }
+        // we can jump from soul sand, but not from a bottom slab
+        boolean jumpingFromBottomSlab = MovementHelper.isBottomSlab(srcDown);
+        boolean jumpingToBottomSlab = MovementHelper.isBottomSlab(toPlace);
+        if (jumpingFromBottomSlab && !jumpingToBottomSlab) {
+            return COST_INF;// the only thing we can ascend onto from a bottom slab is another bottom slab
+        }
+        double walk;
+        if (jumpingToBottomSlab) {
+            if (jumpingFromBottomSlab) {
+                walk = Math.max(JUMP_ONE_BLOCK_COST, WALK_ONE_BLOCK_COST); // we hit space immediately on entering this action
+                walk += context.jumpPenalty;
+            } else {
+                walk = WALK_ONE_BLOCK_COST; // we don't hit space we just walk into the slab
+            }
+        } else {
+            // jumpingFromBottomSlab must be false
+            if (toPlace.is(Blocks.SOUL_SAND)) {
+                walk = WALK_ONE_OVER_SOUL_SAND_COST;
+            } else if (toPlace.is(Blocks.MAGMA_BLOCK)) {
+                walk = SNEAK_ONE_BLOCK_COST;
+            } else {
+                walk = Math.max(JUMP_ONE_BLOCK_COST, WALK_ONE_BLOCK_COST);
+            }
+            walk += context.jumpPenalty;
+        }
+
+        double totalCost = walk + additionalPlacementCost;
+        // start with srcUp2 since we already have its state
+        // includeFalling isn't needed because of the falling check above -- if srcUp3 is falling we will have already exited with COST_INF if we'd actually have to break it
+        totalCost += MovementHelper.getMiningDurationTicks(context, x, y + 2, z, srcUp2, false);
+        if (totalCost >= COST_INF) {
+            return COST_INF;
+        }
+        totalCost += MovementHelper.getMiningDurationTicks(context, destX, y + 1, destZ, false);
+        if (totalCost >= COST_INF) {
+            return COST_INF;
+        }
+        totalCost += MovementHelper.getMiningDurationTicks(context, destX, y + 2, destZ, true);
+        return totalCost;
+    }
+
+    @Override
+    public MovementState updateState(MovementState state) {
+        if (ctx.playerFeet().y < src.y) {
+            // this check should run even when in preparing state (breaking blocks)
+            return state.setStatus(MovementStatus.UNREACHABLE);
+        }
+        super.updateState(state);
+        // TODO incorporate some behavior from ActionClimb (specifically how it waited until it was at most 1.2 blocks away before starting to jump
+        // for efficiency in ascending minimal height staircases, which is just repeated MovementAscend, so that it doesn't bonk its head on the ceiling repeatedly)
+        if (state.getStatus() != MovementStatus.RUNNING) {
+            return state;
+        }
+
+        if (ctx.playerFeet().equals(dest) || ctx.playerFeet().equals(dest.offset(getDirection().below()))) {
+            return state.setStatus(MovementStatus.SUCCESS);
+        }
+
+        BlockState jumpingOnto = BlockStateInterface.get(ctx, positionToPlace);
+        if (!MovementHelper.canWalkOn(ctx, positionToPlace, jumpingOnto)) {
+            ticksWithoutPlacement++;
+            if (MovementHelper.attemptToPlaceABlock(state, winton, dest.below(), false, true) == PlaceResult.READY_TO_PLACE) {
+                state.setInput(Input.SNEAK, true);
+                if (ctx.player().isCrouching()) {
+                    state.setInput(Input.CLICK_RIGHT, true);
+                }
+            }
+            if (ticksWithoutPlacement > 10) {
+                // After 10 ticks without placement, we might be standing in the way, move back
+                state.setInput(Input.MOVE_BACK, true);
+            }
+
+            return state;
+        }
+        // Keys follow the block immediately. The camera eases on its own.
+        MovementHelper.approach(ctx, state, dest);
+
+        state.setInput(Input.SNEAK, Winton.settings().allowWalkOnMagmaBlocks.value && jumpingOnto.is(Blocks.MAGMA_BLOCK));
+
+        if (MovementHelper.isBottomSlab(jumpingOnto) && !MovementHelper.isBottomSlab(BlockStateInterface.get(ctx, src.below()))) {
+            return state; // don't jump while walking from a non double slab into a bottom slab
+        }
+
+        if (Winton.settings().assumeStep.value || ctx.playerFeet().equals(src.above())) {
+            return state;
+        }
+
+        if (Winton.settings().allowSprint.value && ctx.player().onGround()) {
+            state.setInput(Input.SPRINT, true);
+        }
+
+        if (jumpHold > 0) {
+            jumpHold--;
+            return state.setInput(Input.JUMP, true);
+        }
+        if (!ctx.player().onGround()) {
+            return state;
+        }
+
+        int xAxis = Math.abs(src.getX() - dest.getX()); // either 0 or 1
+        int zAxis = Math.abs(src.getZ() - dest.getZ()); // either 0 or 1
+        double flatDistToNext = xAxis * Math.abs((dest.getX() + 0.5D) - ctx.player().position().x) + zAxis * Math.abs((dest.getZ() + 0.5D) - ctx.player().position().z);
+        double sideDist = zAxis * Math.abs((dest.getX() + 0.5D) - ctx.player().position().x) + xAxis * Math.abs((dest.getZ() + 0.5D) - ctx.player().position().z);
+
+        // In the block in front of the step, roughly lined up: jump and hold it.
+        if (flatDistToNext <= 1.08 && sideDist <= 0.45) {
+            jumpHold = 4;
+            return state.setInput(Input.JUMP, true);
+        }
+        return state;
+    }
+
+    public boolean headBonkClear() {
+        BetterBlockPos startUp = src.above(2);
+        for (int i = 0; i < 4; i++) {
+            BetterBlockPos check = startUp.relative(Direction.from2DDataValue(i));
+            if (!MovementHelper.canWalkThrough(ctx, check)) {
+                // We might bonk our head
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean safeToCancel(MovementState state) {
+        // if we had to place, don't allow pause
+        return state.getStatus() != MovementStatus.RUNNING || ticksWithoutPlacement == 0;
+    }
+}

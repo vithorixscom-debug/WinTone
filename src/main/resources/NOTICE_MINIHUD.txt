@@ -1,0 +1,27 @@
+WinTone MiniHUD — licensing notice (LGPL-3.0 only)
+====================================================
+
+Portions of the WinTone MiniHUD category (info lines, overlays, slime-chunk
+RNG, configuration concepts and string identifiers) are adapted from:
+
+  MiniHUD
+  Copyright (c) masa and contributors
+  License: GNU Lesser General Public License version 3 ONLY (LGPL-3.0-only)
+  Upstream (historical): https://github.com/maruohon/minihud
+  Ornithe 1.12.2 fork used as reference for this port.
+
+The verbatim LGPL-3.0 text for these MiniHUD-derived portions is shipped as:
+  META-INF/LICENSE_MINIHUD_LGPL3.txt  (and LICENSE_MINIHUD.txt in sources)
+
+No other license applies to the MiniHUD-derived portions. Do not relicense
+them under GPL-only, proprietary, or any terms other than LGPL-3.0-only.
+
+WinTone / Winton core (Baritone-derived) remains under the project LICENSE
+(LGPL-3.0-or-later) as stated in NOTICE / LICENSE. That does not change the
+LGPL-3.0-only requirement for MiniHUD-adapted code and assets.
+
+You must retain this notice and LICENSE_MINIHUD when redistributing modified
+versions of these MiniHUD-derived parts.
+
+Not a verbatim copy of MiniHUD: this is a client-optimized subset integrated
+into WinTone for Minecraft 1.21.11 (Fabric), without malilib.

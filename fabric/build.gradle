@@ -1,22 +1,22 @@
 /*
- * This file is part of Baritone.
+ * This file is part of Winton.
  *
- * Baritone is free software: you can redistribute it and/or modify
+ * Winton is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Baritone is distributed in the hope that it will be useful,
+ * Winton is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
+ * along with Winton.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import baritone.gradle.task.CreateDistTask
-import baritone.gradle.task.ProguardTask
+import winton.gradle.task.CreateDistTask
+import winton.gradle.task.ProguardTask
 
 plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
@@ -47,6 +47,7 @@ dependencies {
         common sourceSet.output
         shadowCommon sourceSet.output
     }
+    include "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 }
 
 processResources {
@@ -60,6 +61,24 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     archiveClassifier.set "dev-shadow"
+    from(rootProject.file("LICENSE")) {
+        rename { "META-INF/LICENSE_WINTON_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE")) {
+        rename { "META-INF/NOTICE_WINTON.txt" }
+    }
+    from(rootProject.file("LICENSE_MINIHUD.txt")) {
+        rename { "META-INF/LICENSE_MINIHUD_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE_MINIHUD.txt")) {
+        rename { "META-INF/NOTICE_MINIHUD.txt" }
+    }
+    from(rootProject.file("LICENSE_TWEAKEROO.txt")) {
+        rename { "META-INF/LICENSE_TWEAKEROO_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE_TWEAKEROO.txt")) {
+        rename { "META-INF/NOTICE_TWEAKEROO.txt" }
+    }
 }
 
 remapJar {
@@ -70,6 +89,24 @@ remapJar {
 
 jar {
     archiveClassifier.set "dev"
+    from(rootProject.file("LICENSE")) {
+        rename { "META-INF/LICENSE_WINTON_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE")) {
+        rename { "META-INF/NOTICE_WINTON.txt" }
+    }
+    from(rootProject.file("LICENSE_MINIHUD.txt")) {
+        rename { "META-INF/LICENSE_MINIHUD_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE_MINIHUD.txt")) {
+        rename { "META-INF/NOTICE_MINIHUD.txt" }
+    }
+    from(rootProject.file("LICENSE_TWEAKEROO.txt")) {
+        rename { "META-INF/LICENSE_TWEAKEROO_LGPL3.txt" }
+    }
+    from(rootProject.file("NOTICE_TWEAKEROO.txt")) {
+        rename { "META-INF/NOTICE_TWEAKEROO.txt" }
+    }
 }
 
 components.java {
@@ -79,6 +116,7 @@ components.java {
 }
 
 task proguard(type: ProguardTask) {
+    // Default = Modrinth format (no obfuscation). Use -Pwinton.obfuscate for legacy ProGuard.
     proguardVersion "7.4.2"
     compType "fabric"
 }

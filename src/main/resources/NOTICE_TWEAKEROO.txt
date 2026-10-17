@@ -1,0 +1,19 @@
+WinTone Tweakeroo — licensing notice (LGPL-3.0 only)
+====================================================
+
+Portions of the WinTone Tweakeroo category (feature/disable toggle identifiers,
+configuration concepts, and client tweak behaviours) are adapted from:
+
+  Tweakeroo
+  Copyright (c) masa and contributors
+  License: GNU Lesser General Public License version 3 ONLY (LGPL-3.0-only)
+  Upstream (historical): https://github.com/maruohon/tweakeroo
+  Ornithe 1.12.2 fork used as reference for this port.
+
+Verbatim LGPL-3.0 text: META-INF/LICENSE_TWEAKEROO_LGPL3.txt (LICENSE_TWEAKEROO.txt in sources).
+
+No other license applies to the Tweakeroo-derived portions.
+
+Not a verbatim copy: client-optimized subset for Minecraft 1.21.11 (Fabric),
+without malilib. Unimplemented catalog toggles are listed for completeness and
+RU/EN translation only until hooked.

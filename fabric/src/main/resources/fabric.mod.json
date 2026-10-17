@@ -1,38 +1,35 @@
 {
   "schemaVersion": 1,
-  "id": "baritone",
+  "id": "winton",
+  "provides": [
+    "baritone"
+  ],
   "version": "${version}",
 
-  "name": "Baritone",
-  "description": "Google Maps for Blockgame",
+  "name": "WinTone",
+  "description": "WinTone — a Fabric fork of Baritone (https://github.com/cabaletta/baritone). Baritone code is LGPL-3.0-or-later. Bundled MiniHUD and Tweakeroo ports are LGPL-3.0-only, so this combined build is LGPL-3.0-only.",
   "authors": [
-    "leijurv", "Brady"
+    "WinTone",
+    "leijurv",
+    "Brady",
+    "Baritone contributors",
+    "masa (MiniHUD, LGPL-3.0)"
   ],
+  "contributors": [
+    "cabaletta/baritone",
+    "maruohon/minihud"
+  ],
+  "license": "LGPL-3.0-only",
   "contact": {
-    "homepage": "https://github.com/cabaletta/baritone",
-    "sources": "https://github.com/cabaletta/baritone",
-    "issues": "https://github.com/cabaletta/baritone/issues" 
+    "homepage": "https://modrinth.com/mod/winton"
   },
-
-  "license": "LGPL-3.0",
-  "icon": "assets/baritone/icon.png",
 
   "environment": "*",
-  "entrypoints": {
-  },
   "mixins": [
-      "mixins.baritone.json"
+      "mixins.winton.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.14.22",
-    "minecraft": ["1.21.4"]
-  },
-  "custom": {
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/s6fRBAUpmr"
-      }
-    }
+    "minecraft": ["1.21.11"]
   }
 }

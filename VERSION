@@ -1,0 +1,13 @@
+name=Winton
+mod_version=1.17.32
+minecraft_version=1.21.11
+loader=fabric
+loader_version=0.18.5
+fabric_api_version=0.141.6+1.21.11
+java_version=21
+license=LGPL-3.0-only
+upstream=https://github.com/cabaletta/baritone
+build_format=fabric-remapJar
+upload_jar=winton-fabric-1.17.32.jar
+cfg_version=1.17.32
+obfuscation=disabled-by-default

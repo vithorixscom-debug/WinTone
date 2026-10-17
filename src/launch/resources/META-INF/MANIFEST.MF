@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-MixinConfigs: mixins.baritone.json
-MixinConnector: baritone.launch.BaritoneMixinConnector
-Implementation-Title: Baritone
-Implementation-Version: version
+Implementation-Title: WinTone
+Implementation-Version: 1.17.32
+Implementation-Vendor: WinTone contributors

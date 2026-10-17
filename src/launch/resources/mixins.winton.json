@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "package": "winton.launch.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "verbose": false,
+  "injectors": {
+    "maxShiftBy": 2,
+    "defaultRequire": 1
+  },
+  "client": [
+    "MixinCamera",
+    "MixinChunkArray",
+    "MixinClientChunkProvider",
+    "MixinClientPlayerEntity",
+    "MixinClientPlayNetHandler",
+    "MixinCommandSuggestionHelper",
+    "MixinEntity",
+    "MixinEntityRenderManager",
+    "MixinFireworkRocketEntity",
+    "MixinGameRenderer",
+    "MixinGui",
+    "MixinItemStack",
+    "MixinLivingEntity",
+    "MixinLootContextBuilder",
+    "MixinLootTable",
+    "MixinMinecraft",
+    "MixinNetworkManager",
+    "MixinOptions",
+    "MixinPalettedContainer",
+    "MixinPalettedContainer$Data",
+    "MixinPlayerController",
+    "MixinRenderPipelines",
+    "MixinRenderType",
+    "MixinScreen",
+    "MixinWorldRenderer"
+  ],
+  "mixins": [
+  ]
+}
