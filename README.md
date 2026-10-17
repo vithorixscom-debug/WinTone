@@ -1,6 +1,8 @@
 # WinTone
 
-WinTone (mod id `winton`) is a Fabric client fork of [Baritone](https://github.com/cabaletta/baritone) for **Minecraft 1.21.11**.
+Fabric client pathfinder for Minecraft 1.21.11 — [Baritone](https://github.com/cabaletta/baritone) fork with a clean in-game menu (EN/RU), smooth look by default, MiniHUD overlay and light client toggles. Path, mine, build, elytra, waypoints — one mod, mod id `winton` (provides `baritone`).
+
+Клиентский pathfinder для Minecraft 1.21.11 на Fabric. Форк Baritone с аккуратным меню (EN/RU), плавным взглядом по умолчанию, MiniHUD и лёгкими клиентскими переключателями. Всё в одном моде.
 
 Page: https://modrinth.com/mod/winton
 
