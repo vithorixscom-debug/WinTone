@@ -1,6 +1,7 @@
 /*
- * Copyright (c) masa. Modifications Copyright (c) WinTone contributors.
- * This file is part of Winton.
+ * This file is part of Winton, a fork of Baritone (https://github.com/cabaletta/baritone).
+ * Copyright (c) WinTone contributors.
+ * This file was written for WinTone and is not an upstream Baritone source file.
  *
  * Winton is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
