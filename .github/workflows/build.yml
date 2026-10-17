@@ -20,21 +20,21 @@ jobs:
           java-version: "21"
       - run: chmod +x ./gradlew
       - run: ./gradlew :fabric:remapJar --no-daemon
+      - name: Keep only the remapped jar
+        run: |
+          mkdir -p dist
+          find fabric/build/libs -maxdepth 1 -type f -name 'winton-fabric-*.jar' \
+            ! -name '*-dev.jar' ! -name '*-dev-shadow.jar' -exec cp {} dist/ \;
+          ls -l dist
       - uses: actions/upload-artifact@v4
         with:
           name: winton-fabric-${{ github.sha }}
-          path: |
-            fabric/build/libs/winton-fabric-*.jar
-            !fabric/build/libs/*-dev.jar
-            !fabric/build/libs/*-dev-shadow.jar
+          path: dist/*.jar
           if-no-files-found: error
       - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: |
-            fabric/build/libs/winton-fabric-*.jar
-            !fabric/build/libs/*-dev.jar
-            !fabric/build/libs/*-dev-shadow.jar
+          files: dist/*.jar
           body: |
             WinTone ${{ github.ref_name }} for Minecraft Fabric 1.21.11.
             The combined program is LGPL-3.0-only.
