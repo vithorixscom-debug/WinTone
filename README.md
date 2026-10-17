@@ -1,14 +1,12 @@
 # WinTone
 
-Fabric client pathfinder for Minecraft 1.21.11 — [Baritone](https://github.com/cabaletta/baritone) fork with a clean in-game menu (EN/RU), smooth look by default, MiniHUD overlay and light client toggles. Path, mine, build, elytra, waypoints — one mod, mod id `winton` (provides `baritone`).
+Fabric client pathfinder for Minecraft 1.21.11 — a [Baritone](https://github.com/cabaletta/baritone) fork with a clean in-game menu (EN/RU), smooth look by default, a MiniHUD overlay, and light client toggles. Path, mine, build, elytra, waypoints — one mod, mod id `winton` (provides `baritone`).
 
 Клиентский pathfinder для Minecraft 1.21.11 на Fabric. Форк Baritone с аккуратным меню (EN/RU), плавным взглядом по умолчанию, MiniHUD и лёгкими клиентскими переключателями. Всё в одном моде.
 
-Page: https://modrinth.com/mod/winton
+[Modrinth](https://modrinth.com/mod/winton) · [Release 1.17.32](https://github.com/vithorixscom-debug/WinTone/releases/tag/v1.17.32)
 
-It pathfinds, mines, explores, and builds. A small MiniHUD overlay and a few Tweakeroo-style client toggles are included. Those two ports are **LGPL-3.0-only**, so the combined mod is **LGPL-3.0-only** even though Baritone itself is LGPL-3.0-or-later. See `NOTICE`.
-
-WinTone is not affiliated with the Baritone authors.
+WinTone is not affiliated with the Baritone authors. MiniHUD and Tweakeroo ports are LGPL-3.0-only, so the combined mod is **LGPL-3.0-only**. See `NOTICE`.
 
 ## What it does
 
@@ -17,9 +15,11 @@ WinTone is not affiliated with the Baritone authors.
 - Building: `#build`, `#litematica`, `#schematica`, `#sel`
 - Elytra: `#elytra`
 - Waypoints, blacklist, follow, chest sort, render toggle
-- In-game menu for the same actions (English and Russian labels)
+- In-game menu for the same actions, with English and Russian labels
 
-Prefix is `#` unless you changed it. `#help` lists commands.
+The command prefix is `#` unless you changed it. `#help` lists commands.
+
+`provides: ["baritone"]` is intentional. Mods that ask Fabric for `baritone` receive WinTone, and Fabric will not load this jar next to the real Baritone mod.
 
 ## Requirements
 
@@ -34,40 +34,20 @@ Prefix is `#` unless you changed it. `#help` lists commands.
 ./gradlew :fabric:remapJar
 ```
 
-Jar: `fabric/build/libs/winton-fabric-<version>.jar`
-
-Copy that jar into `mods/`. A file named `*.jar.disabled` is not loaded.
+The jar is `fabric/build/libs/winton-fabric-<version>.jar`. Copy it into `mods/`. A file named `*.jar.disabled` is not loaded.
 
 ## License
 
 | Part | License | Notice |
 |---|---|---|
-| Baritone pathing and Winton changes to it | LGPL-3.0-or-later | `LICENSE`, `NOTICE` |
+| Baritone pathing and WinTone changes to it | LGPL-3.0-or-later | `LICENSE`, `NOTICE` |
 | MiniHUD port | LGPL-3.0-only | `LICENSE_MINIHUD.txt`, `NOTICE_MINIHUD.txt` |
 | Tweakeroo port | LGPL-3.0-only | `LICENSE_TWEAKEROO.txt`, `NOTICE_TWEAKEROO.txt` |
 | Combined program | LGPL-3.0-only | `NOTICE` |
 
-Keep the headers. Corresponding Source has to ship with every binary.
-
-## Publishing this fork
-
-`contact.sources` and `contact.issues` point at this fork, https://github.com/vithorixscom-debug/WinTone. They must not point at cabaletta/baritone, or WinTone bugs will be filed on the upstream tracker.
-
-`provides: ["baritone"]` is intentional. Mods that ask Fabric for the `baritone` mod id get WinTone, and Fabric will refuse to load this jar next to the real Baritone mod. The `baritone.api.BaritoneAPI` class is the matching compatibility entry.
-
-The source archive includes a `.git` directory whose history starts at https://github.com/cabaletta/baritone. Do not delete it and do not replace it with a single new commit.
-
-Historical links such as `github.com/cabaletta/baritone/issues/107` are real upstream tickets. `baritone.leijurv.com` is the upstream documentation site.
-
-There are no screenshots in this repository.
-
-## Changelog
-
-See `CHANGELOG.md`.
+Keep the file headers. Corresponding Source has to ship with every binary. File WinTone bugs on this repository, not on cabaletta/baritone.
 
 ## Contributing
-
-Open issues and pull requests on this fork, not on cabaletta/baritone.
 
 - Keep LGPL headers. New Tweakeroo or MiniHUD code stays LGPL-3.0-only.
 - Do not add obfuscated jars.
