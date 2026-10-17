@@ -49,15 +49,7 @@ Keep the headers. Corresponding Source has to ship with every binary.
 
 ## Publishing this fork
 
-`contact.sources` and `contact.issues` are left unset. There is no WinTone GitHub URL in this tree yet, and those fields must not point at cabaletta/baritone or WinTone bugs will be filed on the upstream tracker. After you publish the fork, add them yourself:
-
-```json
-"contact": {
-  "homepage": "https://modrinth.com/mod/winton",
-  "sources": "<this fork>",
-  "issues": "<this fork>/issues"
-}
-```
+`contact.sources` and `contact.issues` point at this fork, https://github.com/vithorixscom-debug/WinTone. They must not point at cabaletta/baritone, or WinTone bugs will be filed on the upstream tracker.
 
 `provides: ["baritone"]` is intentional. Mods that ask Fabric for the `baritone` mod id get WinTone, and Fabric will refuse to load this jar next to the real Baritone mod. The `baritone.api.BaritoneAPI` class is the matching compatibility entry.
 
